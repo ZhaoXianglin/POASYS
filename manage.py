@@ -1,12 +1,13 @@
-from flask import Flask
+import os
+from app import create_app
+from flask.ext.script import Manager, Shell
 
-app = Flask(__name__)
+app = create_app(os.getenv('FLASK_CONFIG') or 'default')
+manager = Manager(app)
 
-
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
-
+def make_shell_content():
+    return dict(app=app)
+manager.add_command("shell", Shell(make_shell_content()))
 
 if __name__ == '__main__':
-    app.run()
+    manager.run()

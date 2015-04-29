@@ -11,9 +11,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    MONGO_SERVER = '202.113.78.6'
-    MONGO_PORT = 27017
-    MONGO_DB = 'POASYS'
+    MONGODB_SETTINGS = {'HOST': '202.113.78.6', 'PORT': 27017, 'DB': "POASYS"}
 
 
 config = {
