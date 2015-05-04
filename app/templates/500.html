@@ -1,7 +1,35 @@
-{% extends "bootstrap/base.html" %}
-{% block title %} POASYS NOT SERVER {% endblock %}
-{% block body %}
-<div class="page-header">
-    <h1>服务器内部错误，请重试</h1>
-</div>
+{% extends "base.html" %}
+{% block content %}
+<section class="mala-content">
+
+</section>
+<div class="mala-modal fade" id="malaModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="false">
+        <div class="mala-modal-dialog">
+            <div class="mala-modal-content">
+                <div class="mala-modal-header">
+                    <!--==================弹出窗口头部=================-->
+                    <!--==================&times为x====================-->
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="mala-modal-title" id="myModalLabel">系统错误</h4>
+                </div>
+                <div class="mala-modal-body">
+                    <!--===================把弹出内容的html代码在这里===================-->
+                    <div class="mala-alert mala-alert-danger">
+                        <h1>服务器内部错误，请重试</h1>
+                      </div>
+                <div class="mala-modal-footer">
+                    <button type="button" class="mala-btn mala-btn-default mala-btn-wide mala-mr" data-dismiss="modal">确定</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+{% block js %}
+{{ super() }}
+    <script type="text/javascript">
+    $("#mala-show-dialog").trigger("click")
+    </script>
 {% endblock %}

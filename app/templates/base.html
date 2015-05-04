@@ -1,0 +1,136 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>舆情检测分析系统</title>
+    <link href="{{ url_for('static', filename = 'css/font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename = 'css/freeue.css') }}" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <!--=============================导航栏================================-->
+    <header id="js-header" class="mala-header mala-header-fix">
+        <div class="mala-clearfix">
+            <!--=============================右侧的个人中心================-->
+            <a href="mala-0101.html" class="mala-logo mala-fl"></a>
+            <div class="mala-user-info mala-fr js-header-dropmenu">
+                <span class="mala-username">Hi, Baiduer!<i class="mala-arrow mala-arrow-down  mala-ml"></i>
+                <!--=====================js/common.js中控制下拉菜单========-->
+                </span>
+                <ul class="mala-header-dropdown-list js-header-list">
+                    <li class="mala-header-dropdown-item"><a href="mala-0202.html" class="mala-link">个人中心</a>  <i class="mala-arrow mala-arrow-up" style="right:10px;"></i>
+                    </li>
+                    <li class="mala-header-dropdown-item"><a href="mala-0202.html" class="mala-link">退出</a>
+                    </li>
+                </ul>
+            </div>
+            <!--=====================mala-avatar控制头像=============-->
+            <span class="mala-avatar mala-fr">
+                <img src="images/demo-photo.jpg">
+            </span>
+            <!--=====================导航栏中间的4个按钮=============-->
+            <nav class="mala-fr">
+                <ul class="mala-nav-list mala-clearfix">
+                    <li class="mala-nav-item mala-fl"> <a href="mala-0201.html" class="mala-nav-link">首页</a> 
+                    </li>
+                    <li class="mala-nav-item mala-fl js-header-dropmenu">
+                        <span class="mala-nav-link">测试数据<i class="mala-arrow mala-arrow-down  mala-ml"></i>
+                        </span>
+                        <ul class="mala-header-dropdown-list js-header-list">
+                            <li class="mala-header-dropdown-item"> <a href="mala-0202.html" class="mala-link">线上数据</a>  <i class="mala-arrow mala-arrow-up" style="right:20px;"></i> 
+                            </li>
+                            <!--============================控制弹窗====================-->
+                            <li class="mala-header-dropdown-item"> <a href="mala-0205.html" class="mala-link" id="mala-show-dialog" data-toggle="modal" data-target="#malaModal">数据弹窗</a>
+                            <li class="mala-header-dropdown-item"> <a href="mala-0202.html" class="mala-link">线上数据</a> 
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="mala-nav-item mala-fl"> <a href="mala-0203.html" class="mala-nav-link">API接口</a> 
+                    </li>
+                    <li class="mala-nav-item mala-fl"> <a href="mala-0204.html" class="mala-nav-link">关于我们</a> 
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <!--=====================左侧栏,js代码在/js/common.js=============-->
+    <nav id="js-aside" class="mala-aside">
+        <h3 class="mala-subnavi-title">舆情监测</h3>
+        <ul class="mala-subnavi-list">
+            <li class="mala-subnavi-item">
+                <a href="" class="mala-subnavi-link"> <i class="fa fa-taxi fa-fw"></i> </i>速度summary</a>
+            </li>
+            <li class="mala-subnavi-item">
+                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-exchange fa-fw"></i> 线上预警
+                    <span class="mala-arrow mala-arrow-down mala-fr"></span>
+                </div>
+                <ul class="mala-thirdnavi-list">
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">交互查询</a> 
+                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">metric信息</a> 
+                    </li>
+                </ul>
+            </li>
+            <li class="mala-subnavi-item">
+                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-coffee fa-fw"></i> 速度报表
+                    <span class="mala-arrow mala-arrow-down mala-fr"></span>
+                </div>
+                <ul class="mala-thirdnavi-list">
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">交互查询</a> 
+                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">metric信息</a> 
+                    </li>
+                </ul>
+            </li>
+            <li class="mala-subnavi-item">
+                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-database fa-fw"></i> 交互查询
+                    <span class="mala-arrow mala-arrow-down mala-fr"></span>
+                </div>
+                <ul class="mala-thirdnavi-list">
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">交互查询</a> 
+                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">metric信息</a> 
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <h3 class="mala-subnavi-title">系统设置</h3>
+        <ul class="mala-subnavi-list">
+            <li class="mala-subnavi-item">
+                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-rss-square fa-fw"></i> RSS源设置
+                    <span class="mala-arrow mala-arrow-down mala-fr"></span>
+                </div>
+                <ul class="mala-thirdnavi-list">
+                    <li class="mala-thirdnavi-item"> <a href="{{ url_for('main.rss_setting') }}" class="mala-thirdnavi-link">RSS源</a>
+                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">metric信息</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="mala-subnavi-item">
+                <a href="" class="mala-subnavi-link"> <i class="fa fa-cube fa-fw"></i>UE MODULE</a>
+            </li>
+
+        </ul>
+    </nav>
+    <!--=========主内容区=======-->
+
+    {% block content %}{% endblock %}
+
+    <!-- 控制左侧栏的隐藏和显示 -->
+    <div class="mala-aside-opt">
+        <a href="#" class="" id="mala-aside-hide">
+            <i class="fa fa-arrow-left"></i>
+        </a>
+        <a href="#" class="" id="mala-aside-show" style="display:none">
+            <i class="fa fa-arrow-right"></i>
+        </a>
+    </div>
+    {% block js %}
+    <script src="{{ url_for('static', filename = 'js/jquery-1.11.0.min.js') }}"></script>
+    <!-- 主要用户左侧栏的下拉效果和导航栏的下拉 -->
+    <script src="{{ url_for('static', filename = 'js/common.js') }}"></script>
+    {% endblock %}
+</body>
+
+</html>

@@ -1,7 +1,12 @@
 __author__ = 'jarvis'
-from flask import Flask,render_template
+# coding:utf-8
+from flask import Flask
 from flask.ext.mongoengine import MongoEngine
 from config import config
+
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 db = MongoEngine()
 def create_app(config_name):
