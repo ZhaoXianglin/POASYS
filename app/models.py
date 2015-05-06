@@ -12,3 +12,17 @@ class RssFeeds(db.Document):
     rfeed = db.StringField(required=True)
     rtype = db.StringField(required=True)
     rdate = db.DateTimeField(default=datetime.now())
+
+class RssResults(db.Document):
+    rtitle = db.StringField()
+    rtitle_keyword = db.ListField()
+    rtitle_segment = db.ListField()
+    rlink = db.StringField()
+    rsummary = db.StringField()
+    rsummary_keyword = db.ListField()
+    rsummary_segment = db.ListField()
+    rpublished = db.DateTimeField()
+    rfrom = db.StringField()
+    rname = db.StringField()
+    roperation = db.IntField(default=0)
+    rlocation = db.StringField()
