@@ -12,7 +12,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    MONGODB_SETTINGS = {'HOST': '202.113.78.6', 'PORT': 27017, 'DB': "POASYS"}
+    MONGODB_SETTINGS = {'HOST': '202.113.78.6', 'PORT': 27017, 'DB': "POASYS",}
 
 
 config = {

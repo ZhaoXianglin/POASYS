@@ -17,6 +17,7 @@ class RssResults(db.Document):
     rtitle = db.StringField()
     rtitle_keyword = db.ListField()
     rtitle_segment = db.ListField()
+    rtitle_segment_pos = db.ListField()
     rlink = db.StringField()
     rsummary = db.StringField()
     rsummary_keyword = db.ListField()

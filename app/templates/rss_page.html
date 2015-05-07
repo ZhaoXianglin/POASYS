@@ -78,7 +78,7 @@
                       {% if page != pagination.page %}
                         <a href="{{ url_for(endpoint,page=page) }}" class="mala-paginate-link">{{ page }}</a>
                       {% else %}
-                        <a class="mala-paginate-link active" href="#">{{ page }}</a>
+                        <strong>{{ page }}</strong>
                       {% endif %}
                     {% else %}
                       <span class=ellipsis>…</span>
@@ -86,7 +86,7 @@
                   {%- endfor %}
                   </div>
                 {% endmacro %}
-                {{ render_pagination(pagination,'main.rss_setting') }}
+                {{ render_pagination(pagination,'main.rss_page') }}
             </div>
 
         </div>
@@ -111,11 +111,11 @@
                             <div class="mala-col-md-3">
                                 <label for="" class="mala-label mala-form-fix">
                                     <span class="mala-required">*</span>RSS来源</label>
-                                    {{ form.hidden_tag() }}
+
                             </div>
                             <div class="mala-col-md-6">
 
-                                {{ form.rfrom(type="text",class="mala-input mala-form-control") }}
+
                             </div>
                         </div>
                         <div class="mala-form-item mala-row">
@@ -124,7 +124,7 @@
                                     <span class="mala-required">*</span>RSS类型</label>
                             </div>
                             <div class="mala-col-md-6">
-                                    {{ form.rtype(class="mala-select mala-form-control")}}
+
                             </div>
                         </div>
                         <div class="mala-form-item mala-row">
@@ -133,7 +133,7 @@
                                     <span class="mala-required">*</span>RSS名称</label>
                             </div>
                             <div class="mala-col-md-6">
-                                {{ form.rname(type="text",class="mala-input mala-form-control") }}
+
                             </div>
                         </div>
                         <div class="mala-form-item mala-row">
@@ -142,12 +142,12 @@
                                     <span class="mala-required">*</span>RSS地址</label>
                             </div>
                             <div class="mala-col-md-6">
-                                {{ form.rfeed(type="text",class="mala-input mala-form-control") }}
+
                             </div>
                         </div>
                         <div class="mala-modal-footer">
                     <button type="button" class="mala-btn mala-btn-default mala-btn-wide mala-mr" data-dismiss="modal">取消</button>
-                    {{ form.rsubmit(class="mala-btn mala-btn-primary mala-btn-wide")}}
+
                 </div>
                     </form>
                 </div>
