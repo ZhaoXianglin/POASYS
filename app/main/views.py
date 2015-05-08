@@ -1,5 +1,6 @@
 __author__ = 'jarvis'
 # coding:utf-8
+import re
 from datetime import datetime
 from flask import render_template, redirect, url_for, request
 
@@ -10,8 +11,11 @@ import feedparser
 import jieba
 from multiprocessing import Process
 from time import sleep
+from ..infohandle.infohandle import InfoHandle
 import jieba.analyse
 import jieba.posseg as pseg
+
+
 def getrssinfo():
     rssfeeds = RssFeeds.objects.all()
     feedcheck = []
@@ -23,22 +27,23 @@ def getrssinfo():
             feedinfo = feedparser.parse(feed.rfeed)
             if feedcheck[num] != feedinfo.entries[0].title:
                 for i in feedinfo.entries:
-                    title_segment_list = []
-                    title_segment = pseg.cut(i.title)
-                    for segment in title_segment:
-                        title_segment_list.append((segment.word, segment.flag))
+                    titlehandle = InfoHandle(i.title)
+                    titlehandle.sentensemark()
                     rssresult = RssResults(
                         rtitle=i.title,
                         rtitle_keyword=list(jieba.analyse.extract_tags(i.title, 5)),
-                        rtitle_segment=list(jieba.cut(i.title)),
-                        rtitle_segment_pos=title_segment_list,
+                        rtitle_segment=titlehandle.segment,
+                        rtitle_segment_pos=titlehandle.segmentpos,
                         rlink=i.link,
                         rsummary=i.summary,
                         rsummary_keyword=list(jieba.analyse.extract_tags(i.summary, 10)),
                         rsummary_segment=list(jieba.cut(i.summary, cut_all=False)),
                         rpublished=i.published,
                         rfrom=feed.rfrom,
-                        rname=feed.rname
+                        rname=feed.rname,
+                        roperation=titlehandle.operation,
+                        remotion=titlehandle.emotion,
+
                     )
                     rssresult.save()
             feedcheck[num] = feedinfo.entries[0].title

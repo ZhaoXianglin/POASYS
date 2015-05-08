@@ -26,4 +26,6 @@ class RssResults(db.Document):
     rfrom = db.StringField()
     rname = db.StringField()
     roperation = db.IntField(default=0)
+    remotion = db.ListField()
     rlocation = db.StringField()
+
