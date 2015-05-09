@@ -40,7 +40,7 @@ def getrssinfo():
                         rsummary_segment=list(jieba.cut(i.summary, cut_all=False)),
                         rpublished=i.published,
                         rfrom=feed.rfrom,
-                        rname=feed.rname,
+                        rtype=feed.rtype,
                         roperation=titlehandle.operation,
                         remotion=titlehandle.emotion,
 

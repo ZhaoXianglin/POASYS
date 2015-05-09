@@ -29,7 +29,8 @@ class InfoHandle(object):
             'ND': '憎恶',
             'NN': '贬责',
             'NK': '妒忌',
-            'NL': '怀疑'
+            'NL': '怀疑',
+            'PC': '惊奇',
         }
         #数据库连接
         self.conn = pymongo.Connection('202.113.78.6', 27017)

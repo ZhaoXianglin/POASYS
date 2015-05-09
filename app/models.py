@@ -24,7 +24,7 @@ class RssResults(db.Document):
     rsummary_segment = db.ListField()
     rpublished = db.DateTimeField()
     rfrom = db.StringField()
-    rname = db.StringField()
+    rtype = db.StringField()
     roperation = db.IntField(default=0)
     remotion = db.ListField()
     rlocation = db.StringField()
