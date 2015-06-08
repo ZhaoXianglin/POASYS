@@ -1,305 +1,623 @@
-(function(){
+//首页情感仪表盘
+function fillIndexOpinionGauge(ec){
+    var myChart = ec.init(document.getElementById('indexopiniongauge'));
+    myChart.showLoading({
+         text:"图表正在努力加载中……"
+        });
 
-	//freeue-0201.html和freeue-0204.html 页面访问量统计表，使用echarts
-	//Echart官网：http://echarts.baidu.com/doc/example.html
-	function fillVisitGraph(){
-		var myChart = echarts.init(document.getElementById('js-visit-graph'));
-		myChart.setOption({
-		    tooltip : {
-		        trigger: 'axis'
-		    },
-		    legend: {
-		        x : 'right',
-		        y : 10,
-		        data:['罗纳尔多','舍普琴科']
-		    },
-		    toolbox: {
-		        show : false,
-		        feature : {
-		            mark : {show: true},
-		            dataView : {show: true, readOnly: false},
-		            restore : {show: true},
-		            saveAsImage : {show: true}
-		        }
-		    },
-		    calculable : true,
-		    polar : [
-		        {
-		            indicator : [
-		                {text : '进攻', max  : 100},
-		                {text : '防守', max  : 100},
-		                {text : '体能', max  : 100},
-		                {text : '速度', max  : 100},
-		                {text : '力量', max  : 100},
-		                {text : '技巧', max  : 100}
-		            ],
-		            radius : 130
-		        }
-		    ],
-		    series : [
-		        {
-		            name: '完全实况球员数据',
-		            type: 'radar',
-		            itemStyle: {
-		                normal: {
-		                    areaStyle: {
-		                        type: 'default'
-		                    }
-		                }
-		            },
-		            data : [
-		                {
-		                    value : [97, 42, 88, 94, 90, 86],
-		                    name : '舍普琴科'
-		                },
-		                {
-		                    value : [97, 32, 74, 95, 88, 92],
-		                    name : '罗纳尔多'
-		                }
-		            ]
-		        }
-		    ]
+    var percentage = 100,negativePercentage= 0,positivePercentage=0;
+    var value = positivePercentage-negativePercentage; // 0:100, 50:50 40:20 60:-20 100:0; -100~100
+    // 基于准备好的dom，初始化echarts图表
 
-		});
-	}
+    var option = {
+        title: {
+            text: '情感倾向',
+            textStyle: {
+                fontSize: 14,
+                fontWeight: 'bolder',
+                color: '#333'
+            }
+        },
+        tooltip: {
+            trigger: 'item', formatter: "负面声量占比 : " + negativePercentage
+            + "%</br>正面声量占比 : " + positivePercentage
+            + "%</br>中性声量占比 : " + percentage + "%</br>"
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                dataView : {show: true, readOnly: false},
+            }
+        },
+        series: [
+            {
+                "name": "正负声量情感倾向",
+                "type": "gauge",
+                "startAngle": 180,
+                "endAngle": 0,
+                "center": ['50%', '75%'],
+                "radius": ['75%', '120%'],
+                "axisLine": {
+                    "show": true,
+                    "lineStyle": {
+                        "color": [[50 / 100, '#ff3e7d'], [1, '#00a5ff']]
+                    }
+                },
+                "pointer": {
+                    length: '80%',
+                    width: 8,
+                    color: '#2E4893'
+                },
+                min: -100,
+                max: 100,
+                axisLabel: {
+                    formatter: function (v) {
+                        /*return (v-50)*2;*/
+                        if (v == 100) return '(正面)100';
+                        if (v == -100) return '-100(负面)';
+                        if (v == 0) return '(中性)';
+                        return v;
+                    }
+                },
+                data: [{value: value, name: '情感倾向'}],
+                detail: {show: true}
+            }
+        ]
+    };
+    //通过Ajax获取数据
+    $.ajax({
+        type: "post",
+        async:true, //同步执行
+        url: "/ajax/indexguage/",
+        dataType: "json", //返回数据形式为json
+        success: function (result) {
+            if (result) {
+                todayMention = result.todaymention;
+                todayPositive = result.positivenum;
+                todayNegative = result.negativenum;
+                if(todayMention != 0){
+                    positivePercentage = (todayPositive / todayMention).toFixed(2) * 100;
+                    negativePercentage = (todayNegative / todayMention).toFixed(2) * 100;
+                    percentage = ((todayMention-todayPositive-todayNegative) / todayMention).toFixed(2) * 100;
+                }
+                value = positivePercentage-negativePercentage;
+                option.tooltip = {
+                    trigger: 'item', formatter: "负面声量占比 : " + negativePercentage
+                    + "%</br>正面声量占比 : " + positivePercentage
+                    + "%</br>中性声量占比 : " + percentage + "%</br>"
+                }
+                option.series[0].data[0].value=value;
+                myChart.hideLoading();
+                myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据加载失败，请刷新重试!");
+        }
+    });
+}
+//首页情感倾向走势
+function fillIndexOpinionLine(ec){
+        var myChart = ec.init(document.getElementById('indexopinionline'));
+        myChart.showLoading({
+             text:"图表正在努力加载中……"
+            });
+        var option = {
+        title : {
+        text: '一周舆情走势',
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['正面声量','中性声量','负面声量']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar','stack','tiled']},
+            }
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : ['周一','周二','周三','周四','周五','周六','周日']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                axisLabel : {
+                    formatter: '{value} 条'
+                }
+            }
+        ],
+        series : [
+            {
+                name:'正面声量',
+                type:'line',
+                data:[120, 132, 101, 134, 90, 230, 210],
+                markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }
+            },
+            {
+                name:'中性声量',
+                type:'line',
+                data:[220, 182, 191, 234, 290, 330, 310]
+            },
+            {
+                name:'负面声量',
+                type:'line',
+                data:[150, 232, 201, 154, 190, 330, 410],
+                markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+    //通过Ajax获取数据
+    $.ajax({
+        type: "post",
+        async:true, //异步执行
+        url: "/ajax/indexline/",
+        dataType: "json", //返回数据形式为json
+        success: function (result) {
+            if (result) {
+                option.xAxis[0].data = result.week;
+                option.series[0].data = result.positivenum;
+                option.series[1].data = result.todaymention;
+                option.series[2].data = result.negativenum;
+                myChart.hideLoading();
+                myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据加载失败，请刷新重试!");
+        }
+    });
 
-	//freeue-0204.html页面最新动态表
-	function fillTrendGraph(){
-		var myChart = echarts.init(document.getElementById('js-trend-graph'));
-		myChart.setOption({
-		    tooltip : {
-		        trigger: 'axis'
-		    },
-		    legend: {
-		    	x : 'right',
-		    	y : 10,
-		        data:['意向','预购','成交']
-		    },
-		    toolbox: {
-		        show : false,
-		    },
-		    calculable : true,
-		    xAxis : [
-		        {
-		            type : 'category',
-		            boundaryGap : false,
-		            data : ['周一','周二','周三','周四','周五','周六','周日']
-		        }
-		    ],
-		    yAxis : [
-		        {
-		            type : 'value'
-		        }
-		    ],
-		    series : [
-		        {
-		            name:'成交',
-		            type:'line',
-		            smooth:true,
-		            itemStyle: {normal: {areaStyle: {type: 'default'}}},
-		            data:[10, 12, 21, 54, 260, 830, 710]
-		        },
-		        {
-		            name:'预购',
-		            type:'line',
-		            smooth:true,
-		            itemStyle: {normal: {areaStyle: {type: 'default'}}},
-		            data:[30, 182, 434, 791, 390, 30, 10]
-		        },
-		        {
-		            name:'意向',
-		            type:'line',
-		            smooth:true,
-		            itemStyle: {normal: {areaStyle: {type: 'default'}}},
-		            data:[1320, 1132, 601, 234, 120, 90, 20]
-		        }
-		    ]
+}
 
-		});
-	}
+// 新闻页面分析
 
-	//freeue-0204.hmtl页面访问量统计的圆形表
-	function fillChordGraph(){
-		var myChart = echarts.init(document.getElementById('js-chord-graph'));
-		myChart.setOption({
-		    color : [
-		        '#FBB367','#80B1D2','#FB8070','#CC99FF','#B0D961',
-		        '#99CCCC','#BEBBD8','#FFCC99','#8DD3C8','#FF9999',
-		        '#CCEAC4','#BB81BC','#FBCCEC','#CCFF66','#99CC66',
-		        '#66CC66','#FF6666','#FFED6F','#ff7f50','#87cefa',
-		    ],
-		    toolbox: {
-		        show : false,
-		    },
-		    tooltip : {
-		        trigger: 'item',
-		        formatter : function (params) {
-		            var g1 = params[1];
-		            var serie = params[0];
-		            var g2 = params[3];
-		            var data = params[2];
-		            var data2 = params[4];
-		            if (data2) {
-		                if (data > data2) {
-		                    return [g1, serie, g2].join(' ');
-		                } else {
-		                    return [g2, serie, g1].join(' ');
-		                }
-		            } else {
-		                return g1
-		            }
-		        }
-		    },
-		    legend : {
-		        data : [
-		            '美国',
-		            '叙利亚反对派',
-		            '阿萨德',
-		            '伊朗',
-		            '塞西',
-		            '哈马斯',
-		            '以色列',
-		            '穆斯林兄弟会',
-		            '基地组织',
-		            '俄罗斯',
-		            '黎巴嫩什叶派',
-		            '土耳其',
-		            '卡塔尔',
-		            '沙特',
-		            '黎巴嫩逊尼派',
-		            '',
-		            '支持',
-		            '反对',
-		            '未表态'
-		        ],
-		        orient : 'vertical',
-		        x : 'left',
-		        y : 30
-		    },
-		    series : [
-		        {
-		            "name": "支持",
-		            "type": "chord",
-		            "showScaleText": false,
-		            "data": [
-		                {"name": "美国"},
-		                {"name": "叙利亚反对派"},
-		                {"name": "阿萨德"},
-		                {"name": "伊朗"},
-		                {"name": "塞西"},
-		                {"name": "哈马斯"},
-		                {"name": "以色列"},
-		                {"name": "穆斯林兄弟会"},
-		                {"name": "基地组织"},
-		                {"name": "俄罗斯"},
-		                {"name": "黎巴嫩什叶派"},
-		                {"name": "土耳其"},
-		                {"name": "卡塔尔"},
-		                {"name": "沙特"},
-		                {"name": "黎巴嫩逊尼派"}
-		            ],
-		            "matrix": [
-		                [0,100,0,0,0,0,100,0,0,0,0,0,0,0,0],
-		                [10,0,0,0,0,10,10,0,10,0,0,10,10,10,10],
-		                [0,0,0,10,0,0,0,0,0,10,10,0,0,0,0],
-		                [0,0,100,0,0,100,0,0,0,0,100,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,10,0],
-		                [0,100,0,10,0,0,0,0,0,0,0,0,10,0,0],
-		                [10,100,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,10,10,0,0],
-		                [0,100,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,100,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,100,10,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,100,0,0,0,0,0,100,0,0,0,0,0,0,0],
-		                [0,100,0,0,0,100,0,100,0,0,0,0,0,0,0],
-		                [0,100,0,0,100,0,0,0,0,0,0,0,0,0,100],
-		                [0,100,0,0,0,0,0,0,0,0,0,0,0,10,0]
-		            ]
-		        },
-		        {
-		            "name": "反对",
-		            "type": "chord",
-		            "showScaleText": false,
-		            "data": [
-		                {"name": "美国"},
-		                {"name": "叙利亚反对派"},
-		                {"name": "阿萨德"},
-		                {"name": "伊朗"},
-		                {"name": "塞西"},
-		                {"name": "哈马斯"},
-		                {"name": "以色列"},
-		                {"name": "穆斯林兄弟会"},
-		                {"name": "基地组织"},
-		                {"name": "俄罗斯"},
-		                {"name": "黎巴嫩什叶派"},
-		                {"name": "土耳其"},
-		                {"name": "卡塔尔"},
-		                {"name": "沙特"},
-		                {"name": "黎巴嫩逊尼派"}
-		            ],
-		            "matrix": [
-		                [0,0,100,100,0,100,0,0,100,0,0,0,0,0,0],
-		                [0,0,0,10,0,0,0,0,0,10,10,0,0,0,0],
-		                [10,0,0,0,0,0,10,10,10,0,0,10,10,0,10],
-		                [10,100,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,10,0,100,0,0,0,10,10,0,0],
-		                [10,0,0,0,100,0,10,0,0,0,0,0,0,0,0],
-		                [0,0,100,0,0,100,0,0,0,0,0,0,0,0,0],
-		                [0,0,100,0,10,0,0,0,0,0,0,0,0,10,0],
-		                [10,0,100,0,0,0,0,0,0,0,0,0,0,100,0],
-		                [0,100,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,100,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,100,0,100,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,100,0,100,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,100,10,0,0,0,0,0,0],
-		                [0,0,100,0,0,0,0,0,0,0,0,0,0,0,0]
-		            ]
-		        },
-		        {
-		            "name": "未表态",
-		            "type": "chord",
-		            "showScaleText": false,
-		            "data": [
-		                {"name": "美国"},
-		                {"name": "叙利亚反对派"},
-		                {"name": "阿萨德"},
-		                {"name": "伊朗"},
-		                {"name": "塞西"},
-		                {"name": "哈马斯"},
-		                {"name": "以色列"},
-		                {"name": "穆斯林兄弟会"},
-		                {"name": "基地组织"},
-		                {"name": "俄罗斯"},
-		                {"name": "黎巴嫩什叶派"},
-		                {"name": "土耳其"},
-		                {"name": "卡塔尔"},
-		                {"name": "沙特"},
-		                {"name": "黎巴嫩逊尼派"}
-		            ],
-		            "matrix": [
-		                [0,0,0,0,100,0,0,100,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [10,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [10,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-		                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-		            ]
-		        }
-		    ]
+function createRandomItemStyle() {
+    return {
+        normal: {
+            color: 'rgb(' + [
+                Math.round(Math.random() * 160),
+                Math.round(Math.random() * 160),
+                Math.round(Math.random() * 160)
+            ].join(',') + ')'
+        }
+    };
+}
+// 分析页面填充柱状图
+function fillAnalysisBar(ec,path){
+    var myChart = ec.init(document.getElementById('analysisbar'));
+    myChart.showLoading({
+         text:"图表正在努力加载中……"
+        });
+    var option = {
+        title : {
+        text: '今日热点',
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['热点词']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                dataView : {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'value',
+                boundaryGap : [0, 0.01]
+            }
+        ],
+        yAxis : [
+            {
+                type : 'category',
+                data : ['巴西','印尼','美国','印度','中国','世界人口(万)']
+            }
+        ],
+        series : [
+            {
+                name:'热点词',
+                type:'bar',
+                data:[18203, 23489, 29034, 104970, 131744, 630230],
+                itemStyle: {
+                normal: {
+                    color: function(params) {
+                        // build a color map as your need.
+                        var colorList = [
+                          '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
+                           '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+                           '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                        ];
+                        return colorList[params.dataIndex]
+                        }
+                    }
+                }
+            }
 
-		});
-	}
+        ]
+    };
+    //通过Ajax获取数据
+    $.ajax({
+        type: "post",
+        async:true, //异步执行
+        url: path,
+        dataType: "json", //返回数据形式为json
+        success: function (result) {
+            if (result) {
+                option.yAxis[0].data = result.words;
+                option.series[0].data = result.values;
+                myChart.hideLoading();
+                myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据加载失败，请刷新重试!");
+        }
+    });
+}
 
-	fillVisitGraph();
-	fillTrendGraph();
-	fillChordGraph();	
-})();
+// 分析页面填充字符云
+function fillAnalysisWordsCloud(ec,path) {
+    var myChart = ec.init(document.getElementById('analysiswordscloud'));
+    myChart.showLoading({
+        text: "图表正在努力加载中……"
+    });
+
+    var option = {
+        title: {
+            text: '今日热点词'
+        },
+        tooltip: {
+            show: true
+        },
+        series: [{
+            name: '今日热点词',
+            type: 'wordCloud',
+            size: ['100%', '100%'],
+            textRotation : [0, 30, -30, 15,-15,45,-45],
+            textPadding: 0,
+            autoSize: {
+                enable: true,
+                minSize: 14
+            },
+            itemStyle: {
+                normal: {
+                    color: function(params) {
+                        // build a color map as your need.
+                        var colorList = [
+                          '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
+                           '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+                           '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                        ];
+                        return colorList[params.dataIndex]
+                    }
+                }
+            }
+        }]
+    };
+    //通过Ajax获取数据
+    $.ajax({
+        type: "post",
+        async:true, //异步执行
+        url: path,
+        dataType: "json", //返回数据形式为json
+        success: function (result) {
+            if (result) {
+                option.series[0].data = result.data;
+                myChart.hideLoading();
+                myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据加载失败，请刷新重试!");
+        }
+    });
+}
+
+// 分析页面填充关键词柱状图
+function fillAnalysisKeyword(ec,path){
+    var myChart = ec.init(document.getElementById('analysiskeyword'));
+    myChart.showLoading({
+         text:"图表正在努力加载中……"
+        });
+    var option = {
+        title : {
+        text: '今日关键词',
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['关键词']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                dataView : {show: true, readOnly: false},
+                magicType: {show: true, type: ['line', 'bar']},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                data:['1','2']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value'
+            }
+        ],
+        series : [
+            {
+                name:'热点词',
+                type:'bar',
+                data:[18203, 23489, 29034, 104970, 131744, 630230],
+                itemStyle: {
+                normal: {
+                    color: function(params) {
+                        // build a color map as your need.
+                        var colorList = [
+                          '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
+                           '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
+                           '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                        ];
+                        return colorList[params.dataIndex]
+                        }
+                    }
+                }
+            }
+
+        ]
+    };
+    //通过Ajax获取数据
+    $.ajax({
+        type: "post",
+        async:true, //异步执行
+        url: path,
+        dataType: "json", //返回数据形式为json
+        success: function (result) {
+            if (result) {
+                option.xAxis[0].data = result.countword;
+                option.series[0].data = result.countvalue;
+                myChart.hideLoading();
+                myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据加载失败，请刷新重试!");
+        }
+    });
+}
+
+// 分析页面填充情感词图
+function fillAnalysisEmotion(ec,path){
+    var myChart = ec.init(document.getElementById('analysisemotion'));
+    myChart.showLoading({
+         text:"图表正在努力加载中……"
+        });
+    var option = {
+        title : {
+            text: '今日情感词'
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            x : 'right',
+            y : 'bottom',
+            data:['情感词']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                mark : {show: true},
+                dataView : {show: true, readOnly: false},
+                restore : {show: true},
+                saveAsImage : {show: true}
+            }
+        },
+        calculable : true,
+        polar : [
+            {
+                indicator : [
+                    {text : '进攻', max  : 100},
+                    {text : '防守', max  : 100},
+                    {text : '体能', max  : 100},
+                    {text : '速度', max  : 100},
+                    {text : '力量', max  : 100},
+                    {text : '技巧', max  : 100}
+                ],
+            }
+        ],
+        series : [
+            {
+                name: '实时情感情况',
+                type: 'radar',
+                size: ['80%', '80%'],
+                itemStyle: {
+                    normal: {
+                        areaStyle: {
+                            type: 'default'
+                        }
+                    }
+                },
+                data : [
+                    {
+                        value : [97, 42, 88, 94, 90, 86],
+                        name : '情感词'
+                    },
+                ]
+            }
+        ]
+    };
+    //通过Ajax获取数据
+    $.ajax({
+        type: "post",
+        async:true, //异步执行
+        url: path,
+        dataType: "json", //返回数据形式为json
+        success: function (result) {
+            if (result) {
+                option.polar[0].indicator = result.countword;
+                option.series[0].data[0].value = result.countvalue;
+                myChart.hideLoading();
+                myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据加载失败，请刷新重试!");
+        }
+    });
+}
+
+//------------search-------------
+// 搜索页面填充河流事件图
+function fillSearchDetailLine(ec){
+    var myChart = ec.init(document.getElementById('searchcountline'));
+    myChart.showLoading({
+         text:"图表正在努力加载中……"
+        });
+    var option = {
+    title : {
+        text: '搜索词声量变化统计',
+    },
+    tooltip : {
+        trigger: 'item',
+        enterable: true
+    },
+    legend: {
+        data:['新闻声量', '微信声量','微博声量']
+    },
+    toolbox: {
+        show : true,
+        feature : {
+            mark : {show: true},
+            restore : {show: true},
+            saveAsImage : {show: true}
+        }
+    },
+    xAxis : [
+        {
+            type : 'time',
+            boundaryGap: [0.05,0.1]
+        }
+    ],
+    series : [
+        {
+            "name": "财经事件",
+            "type": "eventRiver",
+            "weight": 123,
+            "data": [
+                {
+                    "name": "阿里巴巴上市",
+                    "weight": 123,
+                    "evolution": [
+                        {
+                            "time": "2014-05-01",
+                            "value": 14,
+                        },
+                        {
+                            "time": "2014-05-02",
+                            "value": 34,
+                        },
+                        {
+                            "time": "2014-05-03",
+                            "value": 60,
+                        },
+                        {
+                            "time": "2014-05-04",
+                            "value": 40,
+                        },
+                        {
+                            "time": "2014-05-05",
+                            "value": 10,
+                        }
+                    ]
+                },
+                {
+                    "name": "阿里巴巴上市2",
+                    "weight": 123,
+                    "evolution": [
+                        {
+                            "time": "2014-05-02",
+                            "value": 10,
+                        },
+                        {
+                            "time": "2014-05-03",
+                            "value": 34,
+                        },
+                        {
+                            "time": "2014-05-04",
+                            "value": 40,
+                        },
+                        {
+                            "time": "2014-05-05",
+                            "value": 10,
+                        }
+                    ]
+                }
+            ]
+        }]
+        };
+
+
+    //通过Ajax获取数据
+    $.ajax({
+        type: "post",
+        async:true, //异步执行
+        url: '/search/ajax/count/',
+        dataType: "json", //返回数据形式为json
+        success: function (result) {
+            if (result) {
+                myChart.hideLoading();
+                myChart.setOption(option);
+            }else{
+                myChart.hideLoading();
+                myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据加载失败，请刷新重试!");
+        }
+    });
+}
+

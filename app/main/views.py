@@ -1,9 +1,8 @@
 __author__ = 'jarvis'
 # coding:utf-8
-import re
+from flask.views import MethodView
 from datetime import datetime
-from flask import render_template, redirect, url_for, request
-
+from flask import render_template, redirect, url_for
 from app.models import RssFeeds, RssResults
 from . import main
 from .forms import RssForm
@@ -13,7 +12,6 @@ from multiprocessing import Process
 from time import sleep
 from ..infohandle.infohandle import InfoHandle
 import jieba.analyse
-import jieba.posseg as pseg
 
 
 def getrssinfo():
@@ -29,6 +27,10 @@ def getrssinfo():
                 for i in feedinfo.entries:
                     titlehandle = InfoHandle(i.title)
                     titlehandle.sentensemark()
+                    if hasattr(i, 'published'):
+                        publishedtime = i.published
+                    else:
+                        publishedtime = datetime.now()
                     rssresult = RssResults(
                         rtitle=i.title,
                         rtitle_keyword=list(jieba.analyse.extract_tags(i.title, 5)),
@@ -38,12 +40,11 @@ def getrssinfo():
                         rsummary=i.summary,
                         rsummary_keyword=list(jieba.analyse.extract_tags(i.summary, 10)),
                         rsummary_segment=list(jieba.cut(i.summary, cut_all=False)),
-                        rpublished=i.published,
+                        rpublished=publishedtime,
                         rfrom=feed.rfrom,
                         rtype=feed.rtype,
                         roperation=titlehandle.operation,
                         remotion=titlehandle.emotion,
-
                     )
                     rssresult.save()
             feedcheck[num] = feedinfo.entries[0].title
@@ -54,7 +55,9 @@ p = Process(target=getrssinfo)
 
 @main.route('/')
 def index():
-    return render_template('index.html')
+    timenow = datetime.now()
+    rssinfocount = RssResults.objects().count()
+    return render_template('index.html', timenow=timenow, rssinfocount=rssinfocount)
 
 
 @main.route('/rss_setting/<page>', methods=['GET', 'POST'])
@@ -75,22 +78,17 @@ def rss_setting(page=1):
         return redirect(url_for('.rss_setting', page=1))
     return render_template('rss_setting.html', form=form, rssfeeds=rssfeeds, pagination=pagination)
 
-@main.route('/rss_page/<page>', methods=['GET'])
-def rss_page(page):
-    page = int(page)
-    pagination = RssFeeds.objects.paginate(page=page, per_page=10, error_out=True)
-    rssfeeds = pagination.items
-    return render_template('rss_page.html', rssfeeds=rssfeeds, pagination=pagination)
+
 
 @main.route('/rss_get_start/')
 def rssgetstart():
     p.start()
-    return "hello"
+    return "开始抓取，请移步其他工作"
 
 @main.route('/rss_get_stop/')
 def rssgetstop():
     p.terminate()
-    return "stop"
+    return "强制停止抓取"
 
 
 @main.route('/rss_edit/<id>', methods=['GET'])
@@ -104,3 +102,8 @@ def rss_edit(id):
 def rssinfolist():
     pass
 
+class ListView(MethodView):
+    def get(self):
+        return render_template('index.html')
+
+main.add_url_rule('/test', view_func=ListView.as_view('hello'))

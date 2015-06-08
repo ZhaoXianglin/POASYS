@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "_macros.html" as macros %}
 {% block content %}
 <section class="mala-content">
         <h1 class="mala-title-bar">RSS内容列表</h1>
@@ -15,53 +16,33 @@
                 </select>
                 <input type="text" class="mala-input mala-input-large mala-mr" placeholder="请输入关键字"><a class="mala-btn mala-btn-default mala-btn-small ">搜索</a> 
             </div>
-            <div class="mala-opt-bar mala-clearfix">
-                <div class="mala-btn-group mala-mr"><a class="mala-btn mala-btn-primary mala-btn" data-toggle="modal" data-target="#malaModal">新建RSS源</a>
-                </div>
-                <div class="mala-fake-select mala-fr">
-                    <span class="mala-select-title js-fake-select">筛选项目</span> <i class="mala-arrow mala-arrow-down"></i>
-                    <ul class="mala-select-list js-list">
-                        <li class="mala-select-item js-select-item active">筛选项目</li>
-                        <li class="mala-select-item js-select-item">发生的发生</li>
-                        <li class="mala-select-item js-select-item">发生的发生</li>
-                    </ul>
-                    <ul class="mala-select-list-fix">
-                        <li class="mala-select-item">筛选项目</li>
-                        <li class="mala-select-item">发生的发生</li>
-                        <li class="mala-select-item">发生的发生</li>
-                    </ul>
-                </div>
-            </div>
+
             <div class="mala-list-bar">
                 <table id="js-mytable" class="mala-table">
                     <thead>
                         <tr>
-                            <th class="mala-th" width="5%">
-                                <input type="checkbox" class="mala-ml-small">
-                            </th>
                             <th class="mala-th">标题</th>
-                            <th class="mala-th" width="10%">摘要</th>
-                            <th class="mala-th" width="10%"></th>
-                            <th class="mala-th" width="10%">RSS来源</th>
-                            <th class="mala-th" width="20%">加入时间</th>
+                            <th class="mala-th">关键词</th>
+                            <th class="mala-th">类别</th>
+                            <th class="mala-th">来源</th>
+                            <th class="mala-th">发布时间</th>
+                            <th class="mala-th">情感倾向值</th>
                             <th class="mala-th" width="13%">操作</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for rssfeed in rssfeeds %}
+                    {% for rssinfo in rssinfos %}
                         <tr class="mala-tr">
-                            <td class="mala-td">
-                                <input type="checkbox" class="mala-ml-small">
+                            <td class="mala-td mala-td-title"><a href="{{ rssinfo.rlink }}">{{ rssinfo.rtitle }}</a>
                             </td>
-                            <td class="mala-td mala-td-title"><a href="">{{ rssfeed.rfeed }}</a>
-                            </td>
-                            <td class="mala-td">{{ rssfeed.rname }}</td>
-                            <td class="mala-td">{{ rssfeed.rtype }}</td>
-                            <td class="mala-td">{{ rssfeed.rfrom }}</td>
-                            <td class="mala-td">{{ rssfeed.rdate }}</td>
+                            <td class="mala-td">{{ rssinfo.rtitle_keyword }}</td>
+                            <td class="mala-td">{{ rssinfo.rtype }}</td>
+                            <td class="mala-td">{{ rssinfo.rfrom }}</td>
+                            <td class="mala-td">{{ rssinfo.rpublished }}</td>
+                            <td class="mala-td">{{ rssinfo.roperation }}</td>
                             <td class="mala-td">
                             <a href="" class="mala-mr js-edit">编辑</a>
-                            <a href="{{ url_for('main.rss_edit',id=rssfeed.pk)}}">删除</a>
+                            <a href="{{ url_for('rss.delete_rssfeed',id=rssinfo.pk)}}">删除</a>
                             </td>
                         </tr>
                       {% endfor %}
@@ -70,12 +51,7 @@
             </div>
             <div class="mala-pager">
                 <!--=====================页数======================-->
-                <span class="mala-paginate-link">
-                    <span class="mala-caret mala-caret-prev"></span>
-                </span> <a href="" class="mala-paginate-link">1</a>  <a href="" class="mala-paginate-link">2</a>  <a href="" class="mala-paginate-link">3</a>  <a href="" class="mala-paginate-link">4</a>  <a href="" class="mala-paginate-link">5</a>  <a href="" class="mala-paginate-link active">6</a>  <a href="" class="mala-paginate-link">7</a>  <a href="" class="mala-paginate-link">8</a>  <a href="" class="mala-paginate-link">9</a> 
-                <span class="mala-paginate-link">
-                    <span class="mala-caret mala-caret-next"></span>
-                </span>
+                 {{ macros.render_pagination(pagination,'rss.show_content') }}
             </div>
         </div>
     </section>
@@ -94,16 +70,16 @@
                 </div>
                 <div class="mala-modal-body">
                     <!--===================把弹出内容的html代码在这里===================-->
-                    <form class="mala-form" method="post" action="{{ url_for('main.rss_setting') }}">
+                    <form class="mala-form" method="post" action="{{ url_for('rss.index',page=1) }}">
                         <div class="mala-form-item mala-row">
                             <div class="mala-col-md-3">
                                 <label for="" class="mala-label mala-form-fix">
                                     <span class="mala-required">*</span>RSS来源</label>
-                                    {{ form.hidden_tag() }}
+
                             </div>
                             <div class="mala-col-md-6">
 
-                                {{ form.rfrom(type="text",class="mala-input mala-form-control") }}
+
                             </div>
                         </div>
                         <div class="mala-form-item mala-row">
@@ -112,7 +88,7 @@
                                     <span class="mala-required">*</span>RSS类型</label>
                             </div>
                             <div class="mala-col-md-6">
-                                    {{ form.rtype(class="mala-select mala-form-control")}}
+
                             </div>
                         </div>
                         <div class="mala-form-item mala-row">
@@ -121,7 +97,7 @@
                                     <span class="mala-required">*</span>RSS名称</label>
                             </div>
                             <div class="mala-col-md-6">
-                                {{ form.rname(type="text",class="mala-input mala-form-control") }}
+
                             </div>
                         </div>
                         <div class="mala-form-item mala-row">
@@ -130,12 +106,12 @@
                                     <span class="mala-required">*</span>RSS地址</label>
                             </div>
                             <div class="mala-col-md-6">
-                                {{ form.rfeed(type="text",class="mala-input mala-form-control") }}
+
                             </div>
                         </div>
                         <div class="mala-modal-footer">
                     <button type="button" class="mala-btn mala-btn-default mala-btn-wide mala-mr" data-dismiss="modal">取消</button>
-                    {{ form.rsubmit(class="mala-btn mala-btn-primary mala-btn-wide")}}
+
                 </div>
                     </form>
                 </div>
@@ -146,5 +122,4 @@
         {{ super() }}
         <!-- bootstrap的modal.js，控制弹窗 -->
         <script src="{{ url_for('static', filename = 'js/modal.js') }}"></script>
-
     {% endblock %}

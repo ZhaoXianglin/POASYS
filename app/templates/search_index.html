@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% import "_macros.html" as macros %}
+{% block content %}
+<section class="mala-content">
+        <h1 class="mala-title-bar">搜索关键词队列</h1>
+        <ul class="mala-tab-navi-bar mala-clearfix">
+            <li class="mala-tab-navi-item mala-fl mala-mr active">关键词</li>
+        </ul>
+        <div class="mala-container-fluid">
+            <div class="mala-list-bar">
+                <table id="js-mytable" class="mala-table">
+                    <thead>
+                        <tr>
+                            <th class="mala-th">ID</th>
+                            <th class="mala-th">关键词</th>
+                            <th class="mala-th">加入时间</th>
+                            <th class="mala-th">更新时间</th>
+                            <th class="mala-th">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for word in searchword %}
+                            <tr class="mala-tr">
+                            <td class="rname mala-td">{{ word.id }}</td>
+                            <td class="rname mala-td">{{ word.word }}</td>
+                            <td class="rtype mala-td">{{ word.jointime }}</td>
+                            <td class="rfrom mala-td">{{ word.updatetime }}</td>
+                            <td class="mala-td">
+                                <a href="">查看详情</a>
+                                <a href="">删除</a>
+                            </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mala-pager">
+                <!--=====================页数======================-->
+               {% macro render_pagination(pagination, endpoint) %}
+                  <div class="pagination mala-pager">
+                  {%- for page in pagination.iter_pages() %}
+                    {% if page %}
+                      {% if page != pagination.page %}
+                        <a href="{{ url_for(endpoint,page=page) }}" class="mala-paginate-link">{{ page }}</a>
+                      {% else %}
+                        <a class="mala-paginate-link active" href="#">{{ page }}</a>
+                      {% endif %}
+                    {% else %}
+                      <span class=ellipsis>…</span>
+                    {% endif %}
+                  {%- endfor %}
+                  </div>
+                {% endmacro %}
+                {{ macros.render_pagination(pagination,'rss.index') }}
+            </div>
+
+        </div>
+    </section>
+    {% endblock %}
+    {% block js %}
+        {{ super() }}
+        <!-- bootstrap的modal.js，控制弹窗 -->
+        <script src="{{ url_for('static', filename = 'js/modal.js') }}"></script>
+
+    {% endblock %}

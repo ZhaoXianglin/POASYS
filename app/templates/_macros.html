@@ -1,0 +1,16 @@
+<!--=====================页数======================-->
+{% macro render_pagination(pagination, endpoint) %}
+  <div class="pagination mala-pager">
+  {%- for page in pagination.iter_pages() %}
+    {% if page %}
+      {% if page != pagination.page %}
+        <a href="{{ url_for(endpoint,page=page) }}" class="mala-paginate-link">{{ page }}</a>
+      {% else %}
+        <a class="mala-paginate-link active">{{ page }}</a>
+      {% endif %}
+    {% else %}
+      <span class=ellipsis>…</span>
+    {% endif %}
+  {%- endfor %}
+  </div>
+{% endmacro %}

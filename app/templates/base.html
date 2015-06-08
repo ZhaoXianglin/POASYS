@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>舆情检测分析系统</title>
@@ -12,9 +12,9 @@
     <header id="js-header" class="mala-header mala-header-fix">
         <div class="mala-clearfix">
             <!--=============================右侧的个人中心================-->
-            <a href="mala-0101.html" class="mala-logo mala-fl"></a>
+            <a href="{{ url_for('index.index') }}" class="mala-logo mala-fl"></a>
             <div class="mala-user-info mala-fr js-header-dropmenu">
-                <span class="mala-username">Hi, Baiduer!<i class="mala-arrow mala-arrow-down  mala-ml"></i>
+                <span class="mala-username">Hi, 赵祥麟!<i class="mala-arrow mala-arrow-down  mala-ml"></i>
                 <!--=====================js/common.js中控制下拉菜单========-->
                 </span>
                 <ul class="mala-header-dropdown-list js-header-list">
@@ -31,24 +31,14 @@
             <!--=====================导航栏中间的4个按钮=============-->
             <nav class="mala-fr">
                 <ul class="mala-nav-list mala-clearfix">
-                    <li class="mala-nav-item mala-fl"> <a href="mala-0201.html" class="mala-nav-link">首页</a> 
-                    </li>
-                    <li class="mala-nav-item mala-fl js-header-dropmenu">
-                        <span class="mala-nav-link">测试数据<i class="mala-arrow mala-arrow-down  mala-ml"></i>
-                        </span>
-                        <ul class="mala-header-dropdown-list js-header-list">
-                            <li class="mala-header-dropdown-item"> <a href="mala-0202.html" class="mala-link">线上数据</a>  <i class="mala-arrow mala-arrow-up" style="right:20px;"></i> 
-                            </li>
-                            <!--============================控制弹窗====================-->
-                            <li class="mala-header-dropdown-item"> <a href="mala-0205.html" class="mala-link" id="mala-show-dialog" data-toggle="modal" data-target="#malaModal">数据弹窗</a>
-                            <li class="mala-header-dropdown-item"> <a href="mala-0202.html" class="mala-link">线上数据</a> 
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="mala-nav-item mala-fl"> <a href="mala-0203.html" class="mala-nav-link">API接口</a> 
-                    </li>
-                    <li class="mala-nav-item mala-fl"> <a href="mala-0204.html" class="mala-nav-link">关于我们</a> 
-                    </li>
+                    <form class="mala-search-bar" name="search" method="post" action="{{ url_for('search.additem') }}">
+                        <li class="mala-nav-item mala-fl">
+                            <input type="text" name ="keyword" class="mala-input mala-input-large mala-mr" placeholder="请输入关键字">
+                        </li>
+                        <li class="mala-nav-item mala-fl">
+                            <button class="mala-btn mala-btn-danger" style="margin-top: -2px" type="submit">搜 索</button>
+                        </li>
+                    </form>
                 </ul>
             </nav>
         </div>
@@ -58,38 +48,38 @@
         <h3 class="mala-subnavi-title">舆情监测</h3>
         <ul class="mala-subnavi-list">
             <li class="mala-subnavi-item">
-                <a href="" class="mala-subnavi-link"> <i class="fa fa-taxi fa-fw"></i> </i>系统概况</a>
+                <a href="{{ url_for('index.index') }}" class="mala-subnavi-link"> <i class="fa fa-taxi fa-fw"></i> </i>舆情概况</a>
             </li>
             <li class="mala-subnavi-item">
-                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-exchange fa-fw"></i> 线上预警
+                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-exchange fa-fw"></i> 舆情分析
                     <span class="mala-arrow mala-arrow-down mala-fr"></span>
                 </div>
                 <ul class="mala-thirdnavi-list">
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">交互查询</a> 
+                    <li class="mala-thirdnavi-item"> <a href="{{ url_for('analysis.index') }}" class="mala-thirdnavi-link">新闻舆情</a>
                     </li>
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">metric信息</a> 
+                    <li class="mala-thirdnavi-item"> <a href="{{ url_for('analysis.wechatindex') }}" class="mala-thirdnavi-link">微信舆情</a>
+                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">微博舆情</a>
                     </li>
                 </ul>
             </li>
             <li class="mala-subnavi-item">
-                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-coffee fa-fw"></i> 速度报表
+                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-coffee fa-fw"></i> 关键字舆情
                     <span class="mala-arrow mala-arrow-down mala-fr"></span>
                 </div>
                 <ul class="mala-thirdnavi-list">
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">交互查询</a> 
-                    </li>
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">metric信息</a> 
-                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">分类统计</a></li>
+                    <li class="mala-thirdnavi-item"> <a href="{{ url_for('search.index',page=1) }}" class="mala-thirdnavi-link">关键字列表</a></li>
                 </ul>
             </li>
             <li class="mala-subnavi-item">
-                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-database fa-fw"></i> 交互查询
+                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-database fa-fw"></i> 系统设置
                     <span class="mala-arrow mala-arrow-down mala-fr"></span>
                 </div>
                 <ul class="mala-thirdnavi-list">
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">交互查询</a> 
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">字典设置</a>
                     </li>
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">metric信息</a> 
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">人工纠正</a>
                     </li>
                 </ul>
             </li>
@@ -101,15 +91,28 @@
                     <span class="mala-arrow mala-arrow-down mala-fr"></span>
                 </div>
                 <ul class="mala-thirdnavi-list">
-                    <li class="mala-thirdnavi-item"> <a href="{{ url_for('main.rss_setting',page=1) }}" class="mala-thirdnavi-link">RSS源</a>
+                    <li class="mala-thirdnavi-item"> <a href="{{ url_for('rss.index', page=1) }}" class="mala-thirdnavi-link">RSS源列表</a>
                     </li>
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">metric信息</a>
+                    <li class="mala-thirdnavi-item"> <a href="{{ url_for('rss.show_content', page=1) }}" class="mala-thirdnavi-link">RSS内容列表</a>
+                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">停止抓取</a>
                     </li>
                 </ul>
             </li>
             <li class="mala-subnavi-item">
-                <a href="" class="mala-subnavi-link"> <i class="fa fa-cube fa-fw"></i>UE MODULE</a>
+                <a href="" class="mala-subnavi-link"> <i class="fa fa-weibo"></i>微博源数据</a>
             </li>
+            <li class="mala-subnavi-item">
+                <a href="" class="mala-subnavi-link"> <i class="fa fa-wechat"></i>微信源数据</a>
+            </li>
+            <li class="mala-subnavi-item">
+                <a href="" class="mala-subnavi-link"> <i class="fa fa-book"></i>情感字典</a>
+            </li>
+            <li class="mala-subnavi-item">
+                <a href="" class="mala-subnavi-link"> <i class="fa fa-list-ul"></i>历史记录</a>
+            </li>
+
+
 
         </ul>
     </nav>

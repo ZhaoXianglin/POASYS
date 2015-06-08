@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+    <section class="mala-content">
+        <h1 class="mala-title-bar">搜索概况</h1>
+        <div class="mala-overview-bar">
+            <div class="mala-statistic-list">
+                <div class="mala-row">
+                    <div class="mala-col-md-2">
+                        <div class="mala-statistic-item">
+                            <span class="mala-circle-title">{{ newsresult }}</span>
+                            <br>
+                            <span class="mala-circle-desc">新闻搜索数据</span>
+                        </div>
+                    </div>
+                    <div class="mala-col-md-2">
+                        <div class="mala-statistic-item">
+                            <span class="mala-circle-title">{{ wechatresult }}</span>
+                            <br>
+                            <span class="mala-circle-desc">微信搜索数据</span>
+                        </div>
+                    </div>
+                    <div class="mala-col-md-2">
+                        <div class="mala-statistic-item">
+                            <span class="mala-circle-title">{{ weiboresult }}</span>
+                            <br>
+                            <span class="mala-circle-desc">微博搜索数据</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mala-container-fluid">
+            <div class="mala-row">
+                <div class="mala-col-md-12">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">关键字声量</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <div id="searchcountline" class="mala-echarts-normal "></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block js %}
+    {{ super() }}
+    <!-- 加载图表 -->
+    <script src="{{ url_for('static', filename = 'js/echarts.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/echarts-sample.js') }}"></script>
+    <script type="text/javascript">
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: "{{ url_for('static', filename = 'js/') }}"
+            }
+        });
+
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/eventRiver', // 使用柱状图就加载bar模块，按需加载
+            ],
+            function (ec) {
+                fillSearchDetailLine(ec);
+            }
+        );
+
+    </script>
+{% endblock %}

@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% block content %}
+    <section class="mala-content">
+        <ul class="mala-tab-navi-bar mala-clearfix">
+            <li class="mala-tab-navi-item mala-fl mala-mr active">{{ keyword }}</li>
+        </ul>
+        <div class="mala-container-fluid">
+            <div class="mala-row">
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">今日热点</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <div id="analysiswordscloud" class="mala-echarts-normal "></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">微信热点统计{{ todayzero }}</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <div id="analysisbar" class="mala-echarts-normal "></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mala-row">
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix"> <a href="#" class="mala-fr mala-panel-more">更多</a>
+                            <h3 class="mala-panel-title">今日正面微信TOP10</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <ul class="mala-list">
+                                {% for new in positivenews %}
+                                    <li class="mala-list-item">
+                                        <span class="mala-list-time mala-fr">{{ new.date }}</span>
+                                        <span class="mala-list-title"><a href="{{ new.link }}">[极性:{{new.operation}}]{{ new.title }}</a></span>
+                                    </li>
+                                {% endfor %}
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">舆情走势</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <div id="analysiskeyword" class="mala-echarts-normal "></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mala-row">
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">今日负面新闻TOP10</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <ul class="mala-list">
+                                {% for new in negativenews %}
+                                    <li class="mala-list-item">
+                                        <span class="mala-list-time mala-fr">{{ new.date }}</span>
+                                        <span class="mala-list-title"><a href="{{ new.link }}">[极性:{{new.operation}}]{{ new.title }}</a></span>
+                                    </li>
+                                {% endfor %}
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">舆情走势</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <div id="analysisemotion" class="mala-echarts-normal "></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+{% block js %}
+    {{ super() }}
+    <!-- 加载图表 -->
+    <script src="{{ url_for('static', filename = 'js/echarts.js') }}"></script>
+    <script src="{{ url_for('static', filename = 'js/echarts-sample.js') }}"></script>
+    <script type="text/javascript">
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: "{{ url_for('static', filename = 'js/') }}"
+            }
+        });
+
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/gauge', // 使用柱状图就加载bar模块，按需加载
+                'echarts/chart/line',
+                'echarts/chart/bar',
+                'echarts/chart/wordCloud',
+                'echarts/chart/radar'
+            ],
+            function (ec) {
+               fillAnalysisBar(ec,'/analysis/ajax/wechat/bar/');
+                fillAnalysisWordsCloud(ec,'/analysis/ajax/wechat/wordcloud/');
+                fillAnalysisKeyword(ec,'/analysis/ajax/wechat/keyword/');
+                fillAnalysisEmotion(ec,'/analysis/ajax/wechat/emotion/');
+            }
+        );
+
+    </script>
+{% endblock %}

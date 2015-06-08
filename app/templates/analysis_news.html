@@ -1,96 +1,47 @@
 {% extends "base.html" %}
 {% block content %}
     <section class="mala-content">
-        <h1 class="mala-title-bar">系统概况</h1>
-        <div class="mala-overview-bar">
-            <div class="mala-welcome">你好！欢迎使用舆情分析系统。</div>
-            <div class="mala-login-time">登录时间：
-                <time>{{ timenow }}</time>
-            </div>
-            <div class="mala-statistic-list">
-                <div class="mala-row">
-                    <div class="mala-col-md-2">
-                        <div class="mala-statistic-item">
-                            <span class="mala-circle-title">{{ info['wechat'] }}</span>
-                            <br>
-                            <span class="mala-circle-desc">微信数据</span>
-                        </div>
-                    </div>
-                    <div class="mala-col-md-2">
-                        <div class="mala-statistic-item">
-                            <span class="mala-circle-title">{{ info['weibo'] }}</span>
-                            <br>
-                            <span class="mala-circle-desc">微博数据</span>
-                        </div>
-                    </div>
-                    <div class="mala-col-md-2">
-                        <div class="mala-statistic-item">
-                            <span class="mala-circle-title">{{ info['today'] }}</span>
-                            <br>
-                            <span class="mala-circle-desc">今日入库</span>
-                        </div>
-                    </div>
-                    <div class="mala-col-md-2">
-                        <div class="mala-statistic-item">
-                            <span class="mala-circle-title">{{ info['rss'] }}</span>
-                            <br>
-                            <span class="mala-circle-desc">RSS源总数据</span>
-                        </div>
-                    </div>
-                    <div class="mala-col-md-2">
-                        <div class="mala-statistic-item">
-                            <span class="mala-circle-title">{{ info['dict'] }}</span>
-                            <br>
-                            <span class="mala-circle-desc">字典数据</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <ul class="mala-tab-navi-bar mala-clearfix">
+            <li class="mala-tab-navi-item mala-fl mala-mr active">新闻舆情</li>
+            <li class="mala-tab-navi-item mala-fl mala-mr">微博舆情</li>
+            <li class="mala-tab-navi-item mala-fl mala-mr">微信舆情</li>
+        </ul>
         <div class="mala-container-fluid">
             <div class="mala-row">
                 <div class="mala-col-md-6">
                     <div class="mala-panel">
-                        <div class="mala-panel-heading mala-clearfix"> <a href="#" class="mala-fr mala-panel-more">更多</a>
-                            <h3 class="mala-panel-title">新闻动态</h3>
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">今日新闻热点</h3>
                         </div>
                         <div class="mala-panel-body">
-                            <ul class="mala-list">
-                                {% for new in news %}
-                                    <li class="mala-list-item">
-                                        <span class="mala-list-time mala-fr">{{ new.rpublished }}</span>
-                                        <span class="mala-list-title"><a href="{{ new.rlink }}">[{{ new.rtype }}]{{ new.rtitle }}</a></span>
-                                    </li>
-                                {% endfor %}
-
-                            </ul>
+                            <div id="analysiswordscloud" class="mala-echarts-normal "></div>
                         </div>
                     </div>
                 </div>
-                <!--=====================访问统计表格使用echarts,具体看js/echarts.js=============-->
                 <div class="mala-col-md-6">
                     <div class="mala-panel">
                         <div class="mala-panel-heading mala-clearfix">
-                            <h3 class="mala-panel-title">今日舆情概况</h3>
+                            <h3 class="mala-panel-title">新闻热点统计</h3>
                         </div>
                         <div class="mala-panel-body">
-                            <div id="indexopiniongauge" class="mala-echarts-normal "></div>
+                            <div id="analysisbar" class="mala-echarts-normal "></div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="mala-row">
                 <div class="mala-col-md-6">
                     <div class="mala-panel">
-                        <div class="mala-panel-heading mala-clearfix">
-                            <h3 class="mala-panel-title">微信动态</h3>
+                        <div class="mala-panel-heading mala-clearfix"> <a href="#" class="mala-fr mala-panel-more">更多</a>
+                            <h3 class="mala-panel-title">今日正面新闻TOP10</h3>
                         </div>
                         <div class="mala-panel-body">
                             <ul class="mala-list">
-                                {% for wechat in wechats %}
+                                {% for new in positivenews %}
                                     <li class="mala-list-item">
-                                        <span class="mala-list-time mala-fr">{{ wechat.date }}</span>
-                                        <span class="mala-list-title"><a href="{{ wechat.link }}">[微信]{{ wechat.title|truncate(length = 33, end ="...") }}</a></span>
+                                        <span class="mala-list-time mala-fr">{{ new.rpublished }}</span>
+                                        <span class="mala-list-title"><a href="{{ new.rlink }}">[极性:{{new.roperation}}]{{ new.rtitle }}</a></span>
                                     </li>
                                 {% endfor %}
 
@@ -104,7 +55,37 @@
                             <h3 class="mala-panel-title">舆情走势</h3>
                         </div>
                         <div class="mala-panel-body">
-                            <div id="indexopinionline" class="mala-echarts-normal "></div>
+                            <div id="analysiskeyword" class="mala-echarts-normal "></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mala-row">
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">今日负面新闻TOP10</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <ul class="mala-list">
+                                {% for new in negativenews %}
+                                    <li class="mala-list-item">
+                                        <span class="mala-list-time mala-fr">{{ new.rpublished }}</span>
+                                        <span class="mala-list-title"><a href="{{ new.rlink }}">[极性:{{new.roperation}}]{{ new.rtitle }}</a></span>
+                                    </li>
+                                {% endfor %}
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">舆情走势</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <div id="analysisemotion" class="mala-echarts-normal "></div>
                         </div>
                     </div>
                 </div>
@@ -132,10 +113,14 @@
                 'echarts/chart/gauge', // 使用柱状图就加载bar模块，按需加载
                 'echarts/chart/line',
                 'echarts/chart/bar',
+                'echarts/chart/wordCloud',
+                'echarts/chart/radar'
             ],
             function (ec) {
-                fillIndexOpinionGauge(ec);
-                fillIndexOpinionLine(ec);
+                fillAnalysisBar(ec,'/analysis/ajax/news/bar/');
+                fillAnalysisWordsCloud(ec,'/analysis/ajax/news/wordcloud/');
+                fillAnalysisKeyword(ec,'/analysis/ajax/news/keyword/');
+                fillAnalysisEmotion(ec,'/analysis/ajax/news/emotion/');
             }
         );
 
