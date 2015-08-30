@@ -68,8 +68,23 @@
                     <span class="mala-arrow mala-arrow-down mala-fr"></span>
                 </div>
                 <ul class="mala-thirdnavi-list">
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">分类统计</a></li>
+                    <li class="mala-thirdnavi-item"> <a href="{{ url_for('search.searchcount') }}" class="mala-thirdnavi-link">分类统计</a></li>
                     <li class="mala-thirdnavi-item"> <a href="{{ url_for('search.index',page=1) }}" class="mala-thirdnavi-link">关键字列表</a></li>
+                </ul>
+            </li>
+            <li class="mala-subnavi-item">
+                <div class="mala-subnavi-lead mala-clearfix"> <i class="fa fa-database fa-fw"></i> 流量监控
+                    <span class="mala-arrow mala-arrow-down mala-fr"></span>
+                </div>
+                <ul class="mala-thirdnavi-list">
+                    <li class="mala-thirdnavi-item"> <a href="http://202.113.76.181:8080/ntcw/index.html" class="mala-thirdnavi-link">实时流量监控</a>
+                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="http://202.113.76.181:8080/ntcw/package.html" class="mala-thirdnavi-link">流量走势</a>
+                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="http://202.113.76.181:8080/ntcw/ports.html" class="mala-thirdnavi-link">端口分析</a>
+                    </li>
+                    <li class="mala-thirdnavi-item"> <a href="http://202.113.76.181:8080/ntcw/attack.html" class="mala-thirdnavi-link">攻击行为</a>
+                    </li>
                 </ul>
             </li>
             <li class="mala-subnavi-item">
@@ -77,9 +92,9 @@
                     <span class="mala-arrow mala-arrow-down mala-fr"></span>
                 </div>
                 <ul class="mala-thirdnavi-list">
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">字典设置</a>
+                    <li class="mala-thirdnavi-item"> <a href="{{ url_for('rss.dictlist',page=1) }}" class="mala-thirdnavi-link">字典设置</a>
                     </li>
-                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">人工纠正</a>
+                    <li class="mala-thirdnavi-item"> <a href="" class="mala-thirdnavi-link">控制面板</a>
                     </li>
                 </ul>
             </li>
@@ -100,16 +115,16 @@
                 </ul>
             </li>
             <li class="mala-subnavi-item">
-                <a href="" class="mala-subnavi-link"> <i class="fa fa-weibo"></i>微博源数据</a>
+                <a href="{{ url_for('rss.weibolist',page=1) }}" class="mala-subnavi-link"> <i class="fa fa-weibo"></i>微博源数据</a>
             </li>
             <li class="mala-subnavi-item">
-                <a href="" class="mala-subnavi-link"> <i class="fa fa-wechat"></i>微信源数据</a>
+                <a href="{{ url_for('rss.wechatlist',page=1) }}" class="mala-subnavi-link"> <i class="fa fa-wechat"></i>微信源数据</a>
             </li>
             <li class="mala-subnavi-item">
-                <a href="" class="mala-subnavi-link"> <i class="fa fa-book"></i>情感字典</a>
+                <a href="{{ url_for('rss.dictlist',page=1) }}" class="mala-subnavi-link"> <i class="fa fa-book"></i>情感字典</a>
             </li>
             <li class="mala-subnavi-item">
-                <a href="" class="mala-subnavi-link"> <i class="fa fa-list-ul"></i>历史记录</a>
+                <a href="{{ url_for('rss.syslog',page=1) }}" class="mala-subnavi-link"> <i class="fa fa-list-ul"></i>历史记录</a>
             </li>
 
 

@@ -28,7 +28,7 @@ class WechatCapture(object):
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Connection': 'keep-alive'
     }
-    conn = pymongo.Connection('202.113.78.6', 27017)
+    conn = pymongo.Connection('127.0.0.1', 27017)
     db = conn['POASYS']
 
     # 初始化
@@ -75,7 +75,7 @@ class WechatCapture(object):
                 'author': author,
                 'link': detailurl
             }
-            sleep(5)
+            sleep(3)
             self.db.wechat_results.insert(record)
 
     def getstart(self):
@@ -130,7 +130,8 @@ class WechatCapture(object):
                 summary = item.p.get_text()
                 author = item.find('a', id="weixin_account").string[26:-7]
                 time = localtime(float(item.find('div', class_='s-p').get('t')))
-                #time = strftime('%Y-%m-%d %H:%M:%S', time)
+                time = strftime('%Y-%m-%d %H:%M:%S', time)
+                time = datetime.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
                 wechat_info = {
                     'title': title,
                     'link': link,

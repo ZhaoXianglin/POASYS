@@ -3,7 +3,7 @@
 from datetime import datetime
 from flask.ext.mongoengine.wtf import model_form
 from app.forms import RssForm
-from app.models import RssResults, RssFeeds
+from app.models import RssResults, RssFeeds, EmotionDict, WeiboSearchResults, WechatSearchResults, WechatResults, Syslog
 from flask import render_template, redirect, url_for, request
 
 __author__ = 'jarvis'
@@ -60,3 +60,30 @@ def show_content(page=1):
     rssinfos = pagination.items
     return render_template('rss_show_content.html', rssinfos=rssinfos, pagination=pagination, form=form)
 
+@rss.route('/dict/<page>', methods=['GET', 'POST'])
+def dictlist(page=1):
+    page = int(page)
+    pagination = EmotionDict.objects.paginate(page=page, per_page=10, error_out=False)
+    words = pagination.items
+    return render_template('dict_index.html', words=words, pagination=pagination)
+
+@rss.route('/weibo/<page>', methods=['GET', 'POST'])
+def weibolist(page=1):
+    page = int(page)
+    pagination = WeiboSearchResults.objects.paginate(page=page, per_page=10, error_out=False)
+    words = pagination.items
+    return render_template('weibo_list.html', words=words, pagination=pagination)
+
+@rss.route('/wechat/<page>', methods=['GET', 'POST'])
+def wechatlist(page=1):
+    page = int(page)
+    pagination = WechatResults.objects.paginate(page=page, per_page=10, error_out=False)
+    words = pagination.items
+    return render_template('wechat_list.html', words=words, pagination=pagination)
+
+@rss.route('/syslog/<page>', methods=['GET', 'POST'])
+def syslog(page=1):
+    page = int(page)
+    pagination = Syslog.objects.paginate(page=page, per_page=10, error_out=False)
+    words = pagination.items
+    return render_template('sys_log.html', words=words, pagination=pagination)

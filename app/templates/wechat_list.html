@@ -2,9 +2,9 @@
 {% import "_macros.html" as macros %}
 {% block content %}
 <section class="mala-content">
-        <h1 class="mala-title-bar">RSS内容列表</h1>
+        <h1 class="mala-title-bar">微信内容列表</h1>
         <ul class="mala-tab-navi-bar mala-clearfix">
-            <li class="mala-tab-navi-item mala-fl mala-mr active">RSS源查询</li>
+            <li class="mala-tab-navi-item mala-fl mala-mr active">微信查询</li>
         </ul>
         <div class="mala-container-fluid">
             <div class="mala-search-bar">
@@ -23,26 +23,26 @@
                         <tr>
                             <th class="mala-th">标题</th>
                             <th class="mala-th">关键词</th>
-                            <th class="mala-th">类别</th>
-                            <th class="mala-th">来源</th>
+                            <th class="mala-th">作者</th>
+                            <th class="mala-th">情感</th>
                             <th class="mala-th">发布时间</th>
                             <th class="mala-th">情感倾向值</th>
                             <th class="mala-th" width="13%">操作</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for rssinfo in rssinfos %}
+                    {% for rssinfo in words %}
                         <tr class="mala-tr">
-                            <td class="mala-td mala-td-title"><a href="{{ rssinfo.rlink }}">{{ rssinfo.rtitle }}</a>
+                            <td class="mala-td mala-td-title"><a href="{{ rssinfo.link }}">{{ rssinfo.title }}</a>
                             </td>
-                            <td class="mala-td">{{ rssinfo.rtitle_keyword|join(', ')}}</td>
-                            <td class="mala-td">{{ rssinfo.rtype }}</td>
-                            <td class="mala-td">{{ rssinfo.rfrom }}</td>
-                            <td class="mala-td">{{ rssinfo.rpublished }}</td>
-                            <td class="mala-td">{{ rssinfo.roperation }}</td>
+                            <td class="mala-td">{{ rssinfo.title_keyword|join(', ')}}</td>
+                            <td class="mala-td">{{ rssinfo.author }}</td>
+                            <td class="mala-td">{{ rssinfo.emotion|join(', ')}}</td>
+                            <td class="mala-td">{{ rssinfo.date }}</td>
+                            <td class="mala-td">{{ rssinfo.operation }}</td>
                             <td class="mala-td">
                             <a href="" class="mala-mr js-edit">编辑</a>
-                            <a href="{{ url_for('rss.delete_rssfeed',id=rssinfo.pk)}}">删除</a>
+                            <a href="">删除</a>
                             </td>
                         </tr>
                       {% endfor %}
@@ -51,7 +51,7 @@
             </div>
             <div class="mala-pager">
                 <!--=====================页数======================-->
-                 {{ macros.render_pagination(pagination,'rss.show_content') }}
+                 {{ macros.render_pagination(pagination,'rss.wechatlist') }}
             </div>
         </div>
     </section>

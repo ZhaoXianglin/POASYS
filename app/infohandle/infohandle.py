@@ -33,7 +33,7 @@ class InfoHandle(object):
             'PC': '惊奇',
         }
         #数据库连接
-        self.conn = pymongo.Connection('202.113.78.6', 27017)
+        self.conn = pymongo.Connection('127.0.0.1', 27017)
         self.db = self.conn['POASYS']
         self.emotiondict = self.db['emotiondict']
 

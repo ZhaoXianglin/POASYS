@@ -2,9 +2,9 @@
 {% import "_macros.html" as macros %}
 {% block content %}
 <section class="mala-content">
-        <h1 class="mala-title-bar">搜索关键词队列</h1>
+        <h1 class="mala-title-bar">情感字典</h1>
         <ul class="mala-tab-navi-bar mala-clearfix">
-            <li class="mala-tab-navi-item mala-fl mala-mr active">关键词</li>
+            <li class="mala-tab-navi-item mala-fl mala-mr active">情感字典列表</li>
         </ul>
         <div class="mala-container-fluid">
             <div class="mala-list-bar">
@@ -12,23 +12,24 @@
                     <thead>
                         <tr>
                             <th class="mala-th">ID</th>
-                            <th class="mala-th">关键词</th>
-                            <th class="mala-th">加入时间</th>
-                            <th class="mala-th">更新时间</th>
-                            <th class="mala-th">操作</th>
+                            <th class="mala-th">情感词</th>
+                            <th class="mala-th">极性</th>
+                            <th class="mala-th">强度</th>
+                            <th class="mala-th">词义</th>
+                            <th class="mala-th">词性</th>
+                            <th class="mala-th">情感分类</th>
                         </tr>
                     </thead>
                     <tbody>
-                    {% for word in searchword %}
+                    {% for word in words %}
                             <tr class="mala-tr">
                             <td class="rname mala-td">{{ word.id }}</td>
-                            <td class="rname mala-td">{{ word.word }}</td>
-                            <td class="rtype mala-td">{{ word.jointime }}</td>
-                            <td class="rfrom mala-td">{{ word.updatetime }}</td>
-                            <td class="mala-td">
-                                <a href="{{ url_for('search.detail',keyword=word.word) }}">查看详情</a>
-                                <a href="">删除</a>
-                            </td>
+                            <td class="rname mala-td">{{ word.dword }}</td>
+                            <td class="rtype mala-td">{{ word.dpolar }}</td>
+                            <td class="rfrom mala-td">{{ word.dstength }}</td>
+                            <td class="rfrom mala-td">{{ word.dwordmeans }}</td>
+                            <td class="rfrom mala-td">{{ word.dwordtype }}</td>
+                            <td class="rfrom mala-td">{{ word.demotiontype }}</td>
                         </tr>
                       {% endfor %}
                     </tbody>
@@ -52,7 +53,7 @@
                   {%- endfor %}
                   </div>
                 {% endmacro %}
-                {{ macros.render_pagination(pagination,'rss.index') }}
+                {{ macros.render_pagination(pagination,'rss.dictlist') }}
             </div>
 
         </div>

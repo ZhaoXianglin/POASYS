@@ -120,5 +120,10 @@ class WeiboSearchResults(db.Document):
 
     meta = {'collection': 'weibo_search_results'}
 
-
-
+class Syslog(db.Document):
+    count = db.StringField()
+    keyword = db.StringField()
+    source = db.StringField()
+    date = db.DateTimeField()
+    type = db.StringField()
+    meta = {'collection': 'sys_log'}

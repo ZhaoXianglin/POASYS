@@ -1,5 +1,5 @@
 //首页情感仪表盘
-function fillIndexOpinionGauge(ec){
+function fillIndexOpinionGauge(ec,path){
     var myChart = ec.init(document.getElementById('indexopiniongauge'));
     myChart.showLoading({
          text:"图表正在努力加载中……"
@@ -68,7 +68,7 @@ function fillIndexOpinionGauge(ec){
     $.ajax({
         type: "post",
         async:true, //同步执行
-        url: "/ajax/indexguage/",
+        url:path,
         dataType: "json", //返回数据形式为json
         success: function (result) {
             if (result) {
@@ -97,7 +97,7 @@ function fillIndexOpinionGauge(ec){
     });
 }
 //首页情感倾向走势
-function fillIndexOpinionLine(ec){
+function fillIndexOpinionLine(ec,path){
         var myChart = ec.init(document.getElementById('indexopinionline'));
         myChart.showLoading({
              text:"图表正在努力加载中……"
@@ -179,7 +179,7 @@ function fillIndexOpinionLine(ec){
     $.ajax({
         type: "post",
         async:true, //异步执行
-        url: "/ajax/indexline/",
+        url: path,
         dataType: "json", //返回数据形式为json
         success: function (result) {
             if (result) {
@@ -608,6 +608,7 @@ function fillSearchDetailLine(ec){
         dataType: "json", //返回数据形式为json
         success: function (result) {
             if (result) {
+                option.series = result.series
                 myChart.hideLoading();
                 myChart.setOption(option);
             }else{
@@ -619,5 +620,107 @@ function fillSearchDetailLine(ec){
             alert("图表请求数据加载失败，请刷新重试!");
         }
     });
+}
+
+//详情页新闻微博微信走势
+function fillDerailOpinionLine(ec,path){
+        var myChart = ec.init(document.getElementById('indexopinionline'));
+        myChart.showLoading({
+             text:"图表正在努力加载中……"
+            });
+        var option = {
+        title : {
+        text: '一周舆情走势',
+        },
+        tooltip : {
+            trigger: 'axis'
+        },
+        legend: {
+            data:['新闻','微信','微博']
+        },
+        toolbox: {
+            show : true,
+            feature : {
+                dataView : {show: true, readOnly: false},
+                magicType : {show: true, type: ['line', 'bar','stack','tiled']},
+            }
+        },
+        calculable : true,
+        xAxis : [
+            {
+                type : 'category',
+                boundaryGap : false,
+                data : ['周一','周二','周三','周四','周五','周六','周日']
+            }
+        ],
+        yAxis : [
+            {
+                type : 'value',
+                axisLabel : {
+                    formatter: '{value} 条'
+                }
+            }
+        ],
+        series : [
+            {
+                name:'新闻',
+                type:'line',
+                data:[120, 132, 101, 134, 90, 230, 210],
+                markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }
+            },
+            {
+                name:'微信',
+                type:'line',
+                data:[220, 182, 191, 234, 290, 330, 310]
+            },
+            {
+                name:'微博',
+                type:'line',
+                data:[150, 232, 201, 154, 190, 330, 410],
+                markPoint : {
+                data : [
+                    {type : 'max', name: '最大值'},
+                    {type : 'min', name: '最小值'}
+                    ]
+                },
+                markLine : {
+                    data : [
+                        {type : 'average', name: '平均值'}
+                    ]
+                }
+            }
+        ]
+    };
+    //通过Ajax获取数据
+    $.ajax({
+        type: "post",
+        async:true, //异步执行
+        url: path,
+        dataType: "json", //返回数据形式为json
+        success: function (result) {
+            if (result) {
+                option.xAxis[0].data = result.week;
+                option.series[0].data = result.newsresult;
+                option.series[1].data = result.wechatresult;
+                option.series[2].data = result.weiboresult;
+                myChart.hideLoading();
+                myChart.setOption(option);
+            }
+        },
+        error: function (errorMsg) {
+            alert("图表请求数据加载失败，请刷新重试!");
+        }
+    });
+
 }
 

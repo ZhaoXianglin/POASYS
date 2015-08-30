@@ -4,7 +4,7 @@ import pymongo
 import datetime
 
 class baseHandle(object):
-    conn = pymongo.Connection('202.113.78.6', 27017)
+    conn = pymongo.Connection('127.0.0.1', 27017)
     db = conn['POASYS']
 
     def timeformat(self, strtime):

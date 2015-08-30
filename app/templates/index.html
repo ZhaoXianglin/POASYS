@@ -18,7 +18,7 @@
                     </div>
                     <div class="mala-col-md-2">
                         <div class="mala-statistic-item">
-                            <span class="mala-circle-title">{{ info['weibo'] }}</span>
+                            <span class="mala-circle-title">4436</span>
                             <br>
                             <span class="mala-circle-desc">微博数据</span>
                         </div>
@@ -134,8 +134,9 @@
                 'echarts/chart/bar',
             ],
             function (ec) {
-                fillIndexOpinionGauge(ec);
-                fillIndexOpinionLine(ec);
+                fillIndexOpinionGauge(ec,"/ajax/indexguage/");
+                fillIndexOpinionLine(ec, "/ajax/indexline/");
+
             }
         );
 

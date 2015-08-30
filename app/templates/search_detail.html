@@ -5,24 +5,72 @@
             <li class="mala-tab-navi-item mala-fl mala-mr active">{{ keyword }}</li>
         </ul>
         <div class="mala-container-fluid">
+        <div class="mala-row">
+                <div class="mala-col-md-12">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">关键词声量走势</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <div id="indexopinionline" class="mala-echarts-normal "></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="mala-row">
                 <div class="mala-col-md-6">
                     <div class="mala-panel">
                         <div class="mala-panel-heading mala-clearfix">
-                            <h3 class="mala-panel-title">今日热点</h3>
+                            <h3 class="mala-panel-title">关键词情感倾向</h3>
                         </div>
                         <div class="mala-panel-body">
-                            <div id="analysiswordscloud" class="mala-echarts-normal "></div>
+                            <div id="indexopiniongauge" class="mala-echarts-normal "></div>
                         </div>
                     </div>
                 </div>
                 <div class="mala-col-md-6">
                     <div class="mala-panel">
                         <div class="mala-panel-heading mala-clearfix">
-                            <h3 class="mala-panel-title">微信热点统计{{ todayzero }}</h3>
+                            <h3 class="mala-panel-title">情感倾向分析</h3>
                         </div>
                         <div class="mala-panel-body">
-                            <div id="analysisbar" class="mala-echarts-normal "></div>
+                            <div id="analysisemotion" class="mala-echarts-normal "></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mala-row">
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">新闻正面TOP10</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <ul class="mala-list">
+                                {% for new in newsresultup %}
+                                    <li class="mala-list-item">
+                                        <span class="mala-list-time mala-fr">{{ new.date }}</span>
+                                        <span class="mala-list-title"><a href="">[极性:{{new.opiniomn}}]{{ new.title }}</a></span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="mala-col-md-6">
+                    <div class="mala-panel">
+                        <div class="mala-panel-heading mala-clearfix">
+                            <h3 class="mala-panel-title">新闻负面TOP10</h3>
+                        </div>
+                        <div class="mala-panel-body">
+                            <ul class="mala-list">
+                                {% for new in newsresultdown %}
+                                    <li class="mala-list-item">
+                                        <span class="mala-list-time mala-fr">{{ new.date }}</span>
+                                        <span class="mala-list-title"><a href="">[极性:{{new.opiniomn}}]{{ new.title }}</a></span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -32,14 +80,14 @@
                 <div class="mala-col-md-6">
                     <div class="mala-panel">
                         <div class="mala-panel-heading mala-clearfix"> <a href="#" class="mala-fr mala-panel-more">更多</a>
-                            <h3 class="mala-panel-title">今日正面微信TOP10</h3>
+                            <h3 class="mala-panel-title">微信正面TOP10</h3>
                         </div>
                         <div class="mala-panel-body">
                             <ul class="mala-list">
-                                {% for new in positivenews %}
+                                {% for new in wechatresultup %}
                                     <li class="mala-list-item">
                                         <span class="mala-list-time mala-fr">{{ new.date }}</span>
-                                        <span class="mala-list-title"><a href="{{ new.link }}">[极性:{{new.operation}}]{{ new.title }}</a></span>
+                                        <span class="mala-list-title"><a href="{{ new.link }}">[极性:{{new.opinion}}]{{ new.title }}</a></span>
                                     </li>
                                 {% endfor %}
 
@@ -50,10 +98,17 @@
                 <div class="mala-col-md-6">
                     <div class="mala-panel">
                         <div class="mala-panel-heading mala-clearfix">
-                            <h3 class="mala-panel-title">舆情走势</h3>
+                            <h3 class="mala-panel-title">微信负面TOP10</h3>
                         </div>
                         <div class="mala-panel-body">
-                            <div id="analysiskeyword" class="mala-echarts-normal "></div>
+                            <ul class="mala-list">
+                                {% for new in wechatresultdown %}
+                                    <li class="mala-list-item">
+                                        <span class="mala-list-time mala-fr">{{ new.date }}</span>
+                                        <span class="mala-list-title"><a href="">[极性:{{new.opinion}}]{{ new.title }}</a></span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -62,14 +117,14 @@
                 <div class="mala-col-md-6">
                     <div class="mala-panel">
                         <div class="mala-panel-heading mala-clearfix">
-                            <h3 class="mala-panel-title">今日负面新闻TOP10</h3>
+                            <h3 class="mala-panel-title">微博正面TOP10</h3>
                         </div>
                         <div class="mala-panel-body">
                             <ul class="mala-list">
-                                {% for new in negativenews %}
+                                {% for new in weiboresultup %}
                                     <li class="mala-list-item">
-                                        <span class="mala-list-time mala-fr">{{ new.date }}</span>
-                                        <span class="mala-list-title"><a href="{{ new.link }}">[极性:{{new.operation}}]{{ new.title }}</a></span>
+                                        <span class="mala-list-time">{{ new.date }}</span>
+                                        <span><a href="{{ new.link }}">[极性:{{new.operation}}]{{ new.content }}</a></span>
                                     </li>
                                 {% endfor %}
 
@@ -80,10 +135,18 @@
                 <div class="mala-col-md-6">
                     <div class="mala-panel">
                         <div class="mala-panel-heading mala-clearfix">
-                            <h3 class="mala-panel-title">舆情走势</h3>
+                            <h3 class="mala-panel-title">微博负面TOP10</h3>
                         </div>
                         <div class="mala-panel-body">
-                            <div id="analysisemotion" class="mala-echarts-normal "></div>
+                            <ul class="mala-list">
+                                {% for new in weiboresultdown %}
+                                    <li class="mala-list-item">
+                                        <span class="mala-list-time">{{ new.date }}</span>
+                                        <span><a href="{{ new.link }}">[极性:{{new.operation}}]{{ new.content }}</a></span>
+                                    </li>
+                                {% endfor %}
+
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -115,10 +178,9 @@
                 'echarts/chart/radar'
             ],
             function (ec) {
-               fillAnalysisBar(ec,'/analysis/ajax/wechat/bar/');
-                fillAnalysisWordsCloud(ec,'/analysis/ajax/wechat/wordcloud/');
-                fillAnalysisKeyword(ec,'/analysis/ajax/wechat/keyword/');
-                fillAnalysisEmotion(ec,'/analysis/ajax/wechat/emotion/');
+                fillDerailOpinionLine(ec,'/search/ajax/detail/linechart/{{ keyword }}');
+                fillIndexOpinionGauge(ec,"/search/ajax/detail/gauge/{{ keyword }}");
+                fillAnalysisEmotion(ec,'/search/ajax/detail/emotion/{{ keyword }}');
             }
         );
 

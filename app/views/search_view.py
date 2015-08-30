@@ -1,13 +1,14 @@
 # coding:utf-8
 from .import search
 import datetime
+from multiprocessing import Process
 from mongoengine import Q
-import pymongo
+from app.infohandle.counthandle import countHandle
+from app.infohandle.searchhandle import searchHandle
 from app.models import SearchResults, NewsResults, WechatSearchResults, WeiboSearchResults
 from flask import render_template, redirect, url_for, request, jsonify
 
 __author__ = 'jarvis'
-
 
 @search.route('/<page>/', methods=['GET'])
 def index(page=1):
@@ -19,6 +20,7 @@ def index(page=1):
 @search.route('/additem/', methods=['POST'])
 def additem():
     if request.method == 'POST' and len(request.form['keyword']) > 0:
+        keyword=request.form['keyword'].strip(),
         searchword = SearchResults(
             word=request.form['keyword'].strip(),
             jointime=datetime.datetime.now(),
@@ -32,11 +34,80 @@ def additem():
 @search.route('/detail/<keyword>', methods=['GET', 'POST'])
 def detail(keyword):
     if len(keyword) > 0:
-        keyword = keyword.strip()
-        newsresult = NewsResults.objects(search=keyword)
-        wechatresult = WechatSearchResults.objects(search=keyword)
-        weiboresult = WeiboSearchResults.objects(search=keyword)
-        return render_template('search_detail.html', keyword=keyword)
+        newsresultup = NewsResults.objects(search=keyword).order_by('-opiniomn')[:10]
+        newsresultdown = NewsResults.objects(search=keyword).order_by('opiniomn')[:10]
+        wechatresultdown = WechatSearchResults.objects(search=keyword).order_by('opinion')[:10]
+        weiboresultdown = WeiboSearchResults.objects(search=keyword).order_by('operation')[:10]
+        wechatresultup = WechatSearchResults.objects(search=keyword).order_by('-opinion')[:10]
+        weiboresultup = WeiboSearchResults.objects(search=keyword).order_by('-operation', '-trans')[:10]
+        return render_template('search_detail.html', keyword=keyword,
+                               newsresultup=newsresultup, wechatresultup=wechatresultup, weiboresultup=weiboresultup,
+                               newsresultdown=newsresultdown, wechatresultdown=wechatresultdown, weiboresultdown=weiboresultdown)
+
+
+
+@search.route('/ajax/detail/linechart/<keyword>', methods=['GET', 'POST'])
+def linechart(keyword):
+    keyword = keyword.strip()
+    if len(keyword) > 0:
+        todayzero = datetime.datetime.combine(date=datetime.date.today(), time=datetime.time.min)
+        today = datetime.datetime.today()
+        date = [todayzero]
+        week = [today.strftime('%a')]
+        positivenum = [NewsResults.objects(Q(date__gte=todayzero)&Q(search=keyword)).count()]
+        negativenum = [WeiboSearchResults.objects(Q(date__gte=todayzero)&Q(search=keyword)).count()]
+        todaymention = [WechatSearchResults.objects(Q(date__gte=todayzero)&Q(search=keyword)).count()]
+        for day in range(1, 7):
+            week.append((today-datetime.timedelta(days=day)).strftime('%a'))
+            date.append(todayzero-datetime.timedelta(days=day))
+            positivenum.append(NewsResults.objects(Q(date__gte=date[day]) & Q(date__lt=date[day-1])&Q(search=keyword)).count())
+            negativenum.append(WeiboSearchResults.objects(Q(date__gte=date[day]) & Q(date__lt=date[day-1])&Q(search=keyword)).count())
+            todaymention.append(WechatSearchResults.objects(Q(date__gte=date[day]) & Q(date__lt=date[day-1])&Q(search=keyword)).count())
+        return jsonify(
+            newsresult=positivenum,
+            weiboresult=negativenum,
+            wechatresult=todaymention,
+            week=week,
+            date=date,
+        )
+
+@search.route('/ajax/detail/gauge/<keyword>', methods=['GET', 'POST'])
+def gaugechart(keyword):
+    keyword = keyword.strip()
+    if len(keyword) > 0:
+        todayzero = datetime.datetime.combine(date=datetime.date.today(), time=datetime.time.min)
+        positivenum = NewsResults.objects(Q(date__gte=todayzero) & Q(opiniomn__gt=0)&Q(search=keyword)).count()
+        negativenum = NewsResults.objects(Q(date__gte=todayzero) & Q(opiniomn__lt=0)&Q(search=keyword)).count()
+        todaymention = NewsResults.objects(Q(date__gte=todayzero)&Q(search=keyword)).count()
+        return jsonify(
+            positivenum=positivenum,
+            negativenum=negativenum,
+            todaymention=todaymention
+        )
+
+
+@search.route('/ajax/detail/emotion/<keyword>', methods=['GET', 'POST'])
+def emotionchart(keyword):
+    keyword = keyword.strip()
+    if len(keyword) > 0:
+        counthandle = countHandle()
+        selecttime = datetime.date.today()-datetime.timedelta(days=3)
+        selecttime = selecttime.isoformat()
+        data = counthandle.listcount('wechat_results', 'emotion', 'date', selecttime)
+        data = data[0:6]
+        countword = []
+        countvalue = []
+        maxvalue = data[0][1]
+        for item in data:
+            countvalue.append(item[1])
+            countword.append(
+                {'text': item[0], 'max': maxvalue}
+            )
+        return jsonify(
+            countword=countword,
+            countvalue=countvalue,
+        )
+
 
 @search.route('/count/', methods=['GET', 'POST'])
 def searchcount():
@@ -105,6 +176,25 @@ def drawcountchart():
             "evolution": dayweibo
         })
 
+    wechatjson = {
+        'name': "微信声量",
+        'type': "eventRiver",
+        'weight': 123,
+        'data': wechatresult
+    }
+    weibojson = {
+        'name': "微博声量",
+        'type': "eventRiver",
+        'weight': 123,
+        'data': weiboresult
+    }
+    newsjson = {
+        'name': "新闻声量",
+        'type': "eventRiver",
+        'weight': 123,
+        'data': newsresult
+    }
+
     return jsonify(
-        keywordresult=wechatresult
+        series=[wechatjson, newsjson, weibojson]
     )

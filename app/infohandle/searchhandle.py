@@ -1,5 +1,6 @@
 # encoding=utf-8
 import datetime
+from multiprocessing import Process, Pool
 from app.infohandle.basehandle import baseHandle
 from app.infohandle.weibohandle import WeiboCapture
 from app.infohandle.wechathandle import WechatCapture
@@ -42,9 +43,12 @@ class searchHandle(baseHandle):
         self.db.sys_log.insert(sys_log)
 
     def getAll(self):
-        self.getNews()
-        self.getWechat()
-        self.getWeibo()
+        news = Process(target=self.getNews())
+        weibo = Process(target=self.getWeibo())
+        wechat = Process(target=self.getWechat())
+        news.start()
+        weibo.start()
+        wechat.start()
 
     def captureRss(self):
         rss = RssHandle()
@@ -60,7 +64,6 @@ class searchHandle(baseHandle):
 
 
 if __name__ == '__main__':
-    test = searchHandle('长江沉船')
-    test.getWechat()
-
+    test = searchHandle('股市')
+    test.captureRss()
 
